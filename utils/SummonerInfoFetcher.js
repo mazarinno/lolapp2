@@ -213,23 +213,34 @@ define([
       setTimeout(getNewLeagueClientLog, 3000);
     }
 
-    if (line.includes('lol-champ-select|') && !_teamInfo) {
-      // looking for specific actions instead of the whole actions JSON
-      // since sometimes the actions JSON is invalid
+    // IF IN GAMEFLOW .
+    if (line.includes('lol-gameflow|')) {
+      let div = document.getElementById('my-team');
 
-      let matches = line.match(SUMMONER_NAME_REGEX);
-      if (matches && (matches.length >= 3)) {
-        try {
-          let localPlayerCellId = Number(matches[1]);
-          let myTeam = matches[2];
-          myTeam = myTeam.substring(0, myTeam.indexOf("]") + 1);
-          _teamInfo = JSON.parse(myTeam);
-          _printMyTeam(localPlayerCellId, _teamInfo);
-        } catch (e) {
-          console.error('failed to parse log line: ' + e.message);
-          _teamInfo = null;
-        }
+      try {
+        fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
+        .then(response => response.json())
+        .then(data => {
+          let dataString = JSON.stringify(data);
+          div.innerHTML += dataString;
+        })
+      } catch (error) {
+        div.innerHTML += error;
+        console.error(error);
       }
+      // let matches = line.match(SUMMONER_NAME_REGEX);
+      // if (matches && (matches.length >= 3)) {
+      //   try {
+      //     let localPlayerCellId = Number(matches[1]);
+      //     let myTeam = matches[2];
+      //     myTeam = myTeam.substring(0, myTeam.indexOf("]") + 1);
+      //     _teamInfo = JSON.parse(myTeam);
+      //     _printMyTeam(localPlayerCellId, _teamInfo);
+      //   } catch (e) {
+      //     console.error('failed to parse log line: ' + e.message);
+      //     _teamInfo = null;
+      //   }
+      // }
     }
 
     if (line.includes('GAMEFLOW_EVENT.QUIT_TO_LOBBY') ||
