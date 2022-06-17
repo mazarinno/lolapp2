@@ -18,6 +18,8 @@ define([
   let _gameRoot;
   let _ioPlugin;
   let _apiKey;
+  let _playerName = "";
+  let _playerTeam = "";
 
   function start(gameInfo, key) {
     if (gameInfo == null) {
@@ -215,12 +217,28 @@ define([
     // get all players once and scrub through team members only and extract all KDA data
     if (line.includes('lol-gameflow|')) {
       let div = document.getElementById('my-team');
-    
+
+      // fetch active player name
+      fetch("​https://127.0.0.1:2999/liveclientdata/activeplayername")
+        .then(response => response.json())
+        .then(data => {
+          _playerName = JSON.stringify(data);
+        })
+
+      // fetch player list
       fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
       .then(response => response.json())
       .then(data => {
         for (player of data) {
-          div.innerHTML += player.championName;
+          if (player.summonerName == _playerName) { 
+            _playerTeam = player.team;
+          }
+        }
+
+        for (player of data) {
+          if (player.team == _playerTeam) { 
+            // fetch KDA of all those on player team and add them to appropriate global variables ... 
+          }
         }
         // let dataString = JSON.stringify(data);
         // div.innerHTML += dataString;
