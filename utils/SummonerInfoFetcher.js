@@ -219,7 +219,9 @@ define([
       fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
       .then(response => response.json())
       .then(data => {
-        div.innerHTML += data[0].championName;
+        for (player of data) {
+          div.innerHTML += player.championName;
+        }
         // let dataString = JSON.stringify(data);
         // div.innerHTML += dataString;
       });
