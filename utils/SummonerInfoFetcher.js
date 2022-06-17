@@ -6,7 +6,6 @@ define([
   const LOL_CEF_CLIENT_LOG_LISTENER_ID = 'LOL_CEF_CLIENT_LOG_LISTENER_ID';
   const SUMMONER_NAME_REGEX = /\"localPlayerCellId\":(\d).*,\"myTeam\":(\[.*\])/;
 
-  
   let _teamInfo = null;
   let _gameInfo = null;
   let _timerId = null;
@@ -99,7 +98,7 @@ define([
 
     _ioPlugin.getTextFile(filename, false, function (status, data) {
       if (!status) {
-        return setTimeout(function () {
+        return setTimeout(function () {  // ERROR
           callback(false, "failed to read " + filename, null);
         }, 1);
       }
@@ -107,12 +106,12 @@ define([
       let match = regEx.exec(data);
 
       if ((null == match) || (match.length !== 2)) {
-        return setTimeout(function () {
+        return setTimeout(function () {  // ERROR
           callback(false, "failed to read region from " + filename, null);
         }, 1);
       }
 
-      return setTimeout(function () {
+      return setTimeout(function () { // RETURN REGION
         callback(true, null, match[1].toLowerCase());
       }, 1);
     });
@@ -123,7 +122,7 @@ define([
     if (!status) {
       console.error(statusReason);
 
-      _cefRegionTimer = setTimeout(function () {
+      _cefRegionTimer = setTimeout(function () {  // ERROR CASE
         _getRegionCefClient(regionCallback);
       }, SUMMONER_INFO_FETCHER_INTERVAL_MS);
 
@@ -140,7 +139,7 @@ define([
     if (!status) {
       console.error(statusReason);
 
-      _cefSummonerNameTimer = setTimeout(function() {
+      _cefSummonerNameTimer = setTimeout(function() {  // ERROR CASE
         _getSummonerNameCefClient(summonerNameCallback);
       }, SUMMONER_INFO_FETCHER_INTERVAL_MS);
 
@@ -159,7 +158,6 @@ define([
       return;
     }
 
-
     _ioPlugin.getLatestFileInDirectory(filePattern, function(status, logFileName) {
       if (!status || !logFileName.endsWith(".log")) {
         return callback(false, "couldn't find log file", null);
@@ -169,7 +167,7 @@ define([
       _ioPlugin.onFileListenerChanged.addListener(_cefClientLogFileListener);
 
       let fullLogPath = path + logFileName;
-      _listenOnCefClientLog(fullLogPath, callback);
+      _listenOnCefClientLog(fullLogPath, callback); // proper syntax? 
     });
   }
 
@@ -190,7 +188,7 @@ define([
       fullLogPath, skipToEnd, function (id, status, data) {
         if (!status) {
           console.log("failed to stream " + id + ' (' + data + '), retrying...');
-          return setTimeout(_listenOnCefClientLog, 500);
+          return setTimeout(_listenOnCefClientLog, 500);  // ERROR CASE
         }
 
         console.log('now streaming ' + id);
@@ -208,26 +206,25 @@ define([
       return;
     }
 
-    if (line.includes('Shut down EventCollector')) {
+    if (line.includes('Shut down EventCollector')) {  // IF LOG CLOSES, OPEN THE NEXT ONE
       console.log('EventCollector shut down detected, switching to new log file...');
       setTimeout(getNewLeagueClientLog, 3000);
     }
 
     // IF IN GAMEFLOW .
+    // get all players once and scrub through team members only and extract all KDA data
     if (line.includes('lol-gameflow|')) {
       let div = document.getElementById('my-team');
+    
+      fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
+      .then(response => response.json())
+      .then(data => {
+        div.innerHTML += data[0].championName;
+        // let dataString = JSON.stringify(data);
+        // div.innerHTML += dataString;
+      });
 
-      try {
-        fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
-        .then(response => response.json())
-        .then(data => {
-          let dataString = JSON.stringify(data);
-          div.innerHTML += dataString;
-        })
-      } catch (error) {
-        div.innerHTML += error;
-        console.error(error);
-      }
+
       // let matches = line.match(SUMMONER_NAME_REGEX);
       // if (matches && (matches.length >= 3)) {
       //   try {
