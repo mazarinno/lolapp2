@@ -18,6 +18,7 @@ define([
   let _gameRoot;
   let _ioPlugin;
   let _apiKey;
+  let _fetchName = false;
   let _playerName = "";
   let _playerTeam = "";
 
@@ -218,32 +219,43 @@ define([
     if (line.includes('lol-gameflow|')) {
       let div = document.getElementById('my-team');
 
-      // fetch active player name
-      fetch("​https://127.0.0.1:2999/liveclientdata/activeplayername")
+      // if we haven't gotten the name yet
+      // this fetch name section will help us find the player's team
+      if (_fetchName = false) {
+        // fetch active player name
+        fetch("​https://127.0.0.1:2999/liveclientdata/activeplayername")
+          .then(response => response.json())
+          .then(data => {
+            _playerName = JSON.stringify(data);
+          })
+
+        // fetch player list
+        fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
         .then(response => response.json())
         .then(data => {
-          _playerName = JSON.stringify(data);
-        })
+          for (player of data) {
+            if (player.summonerName == _playerName) { 
+              _playerTeam = player.team;
+            }
+          }
+        });
+
+        _fetchName = true;
+      }
 
       // fetch player list
       fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
       .then(response => response.json())
       .then(data => {
         for (player of data) {
-          if (player.summonerName == _playerName) { 
-            _playerTeam = player.team;
-          }
-        }
-
-        for (player of data) {
           if (player.team == _playerTeam) { 
             // fetch KDA of all those on player team and add them to appropriate global variables ... 
+            return
           }
-        }
+        }});
+
         // let dataString = JSON.stringify(data);
         // div.innerHTML += dataString;
-      });
-
 
       // let matches = line.match(SUMMONER_NAME_REGEX);
       // if (matches && (matches.length >= 3)) {
