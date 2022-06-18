@@ -21,6 +21,9 @@ define([
   let _fetchName = false;
   let _playerName = "";
   let _playerTeam = "";
+  let _teamKills = 0;
+  let _teamDeaths = 0;
+  let _teamAssists = 0;
 
   function start(gameInfo, key) {
     if (gameInfo == null) {
@@ -250,12 +253,14 @@ define([
         for (player of data) {
           if (player.team == _playerTeam) { 
             // fetch KDA of all those on player team and add them to appropriate global variables ... 
-            return
+            // data will only be recorded if it is an increase in each case
+            if ((_teamKills += player.scores.kills) > _teamKills) _teamKills += player.scores.kills;
+            if ((_teamDeaths += player.scores.deaths) > _teamDeaths) _teamDeaths += player.scores.deaths;
+            if ((_teamAssists += player.scores.assists) > _teamAssists) _teamAssists += player.scores.assists;
           }
         }});
 
-        // let dataString = JSON.stringify(data);
-        // div.innerHTML += dataString;
+        div.innerHTML += _teamKills + " " + _teamDeaths + " " + _teamAssists + " ";
 
       // let matches = line.match(SUMMONER_NAME_REGEX);
       // if (matches && (matches.length >= 3)) {
