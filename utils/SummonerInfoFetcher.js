@@ -228,6 +228,11 @@ define([
       let killerTeam;
       let killer;
       let playerTeam;
+      let playerGold;
+      let teamGoldEstimate;
+      let killCount = 0;
+      let deathCount = 0;
+      let assistCount = 0;
 
       // TODO change these globals into local inside this gameflow if statement
       // fetch player team
@@ -235,27 +240,30 @@ define([
       .then(response => response.json())
       .then(data => { 
         playerTeam = data[0].team; 
+        
+        // get player gold
+        fetch("https://127.0.0.1:2999/liveclientdata/activeplayer")
+          .then(response => response.json())
+          .then(data => { 
+            playerGold = data[0].currentGold 
+            teamGoldEstimate = playerGold * 5;
+          });
 
-        // fetch player list
-        fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
-        .then(response => response.json())
-        .then(data => {
-          let killCount = 0;
-          let deathCount = 0;
-          let assistCount = 0;
+        for (player of data) {
+          if (player.team == playerTeam) { 
+            // fetch KDA of all those on player team and add them to appropriate global variables ... 
+            // data will only be recorded if it is an increase in each case
+            killCount += player.scores.kills;
+            deathCount += player.scores.deaths;
+            assistCount += player.scores.assists;
 
-          for (player of data) {
-            if (player.team == playerTeam) { 
-              // fetch KDA of all those on player team and add them to appropriate global variables ... 
-              // data will only be recorded if it is an increase in each case
-              killCount += player.scores.kills;
-              deathCount += player.scores.deaths;
-              assistCount += player.scores.assists;
-            }
+            // use to loop to also increment levelcount and figure out an equation to convert this to total xp of the group
+
           }
+        }
 
-          // TODO pass these variables out to a csv ...
-        })
+        // TODO pass these variables out to a csv ...
+
       
         // fetch event data
         fetch("https://127.0.0.1:2999/liveclientdata/eventdata")
