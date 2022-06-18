@@ -224,6 +224,7 @@ define([
     // get all players once and scrub through team members only and extract all KDA data
     if (line.includes('lol-gameflow|')) {
       let div = document.getElementById('my-team');
+      let killerTeam = "";
 
       // if we haven't gotten the name yet
       // this fetch name section will help us find the player's team
@@ -278,6 +279,9 @@ define([
       fetch("GET ​https://127.0.0.1:2999/liveclientdata/eventdata")
       .then(response => response.json())
       .then(data => {
+        let dragonCount = 0;
+        let heraldCount = 0;
+
         for (leagueEvent of data) {
           // looking for DragonKill and HeraldKill
           if (leagueEvent.EventName == "DragonKill" || leagueEvent.EventName == "HeraldKill") {
@@ -289,7 +293,7 @@ define([
             .then(data => {
               for (player of data) {
                 if (player.summonerName == killer) { 
-                  let killerTeam = player.team;
+                  killerTeam = player.team;
                 }
               }
             });
@@ -298,10 +302,10 @@ define([
           if (killerTeam == _playerTeam) {
             switch(leagueEvent.EventName) {
               case "DragonKill":
-                
+                if ((_teamDragons + dragonCount) > _teamDragons) _teamDragons += dragonCount;
                 break;
               case "HeraldKill":
-  
+                if ((_teamHeralds + heraldCount) > _teamHeralds) _teamHeralds += heraldCount;
                 break;
             }
           }
