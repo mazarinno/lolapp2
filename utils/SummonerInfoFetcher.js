@@ -24,6 +24,9 @@ define([
   let _teamKills = 0;
   let _teamDeaths = 0;
   let _teamAssists = 0;
+  let _teamDragons = 0;
+  let _teamHeralds = 0;
+  let _teamMonsters = 0;
 
   function start(gameInfo, key) {
     if (gameInfo == null) {
@@ -232,7 +235,7 @@ define([
             _playerName = JSON.stringify(data);
           })
 
-        // fetch player list
+        // fetch player team
         fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
         .then(response => response.json())
         .then(data => {
@@ -250,31 +253,61 @@ define([
       fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
       .then(response => response.json())
       .then(data => {
+        let killCount = 0;
+        let deathCount = 0;
+        let assistCount = 0;
+
         for (player of data) {
           if (player.team == _playerTeam) { 
             // fetch KDA of all those on player team and add them to appropriate global variables ... 
             // data will only be recorded if it is an increase in each case
-            if ((_teamKills + player.scores.kills) > _teamKills) _teamKills += player.scores.kills;
-            if ((_teamDeaths + player.scores.deaths) > _teamDeaths) _teamDeaths += player.scores.deaths;
-            if ((_teamAssists + player.scores.assists) > _teamAssists) _teamAssists += player.scores.assists;
+            killCount += player.kills;
+            deathCount += player.deaths;
+            assistCount += player.assists;
+          }
+        }
+
+        if ((_teamKills + killCount) > _teamKills) _teamKills += killCount;
+        if ((_teamDeaths + deathCount) > _teamDeaths) _teamDeaths += deathCount;
+        if ((_teamAssists + assistCount) > _teamAssists) _teamAssists += assistCount;
+      });
+
+      div.innerHTML += _teamKills + " " + _teamDeaths + " " + _teamAssists + " ";
+
+      // fetch event data
+      fetch("GET ​https://127.0.0.1:2999/liveclientdata/eventdata")
+      .then(response => response.json())
+      .then(data => {
+        for (leagueEvent of data) {
+          // looking for DragonKill and HeraldKill
+          if (leagueEvent.EventName == "DragonKill" || leagueEvent.EventName == "HeraldKill") {
+            let killer = leagueEvent.KillerName;
+            
+            // find killer team
+            fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
+            .then(response => response.json())
+            .then(data => {
+              for (player of data) {
+                if (player.summonerName == killer) { 
+                  let killerTeam = player.team;
+                }
+              }
+            });
+          }
+          
+          if (killerTeam == _playerTeam) {
+            switch(leagueEvent.EventName) {
+              case "DragonKill":
+                
+                break;
+              case "HeraldKill":
+  
+                break;
+            }
           }
         }});
 
-        div.innerHTML += _teamKills + " " + _teamDeaths + " " + _teamAssists + " ";
-
-      // let matches = line.match(SUMMONER_NAME_REGEX);
-      // if (matches && (matches.length >= 3)) {
-      //   try {
-      //     let localPlayerCellId = Number(matches[1]);
-      //     let myTeam = matches[2];
-      //     myTeam = myTeam.substring(0, myTeam.indexOf("]") + 1);
-      //     _teamInfo = JSON.parse(myTeam);
-      //     _printMyTeam(localPlayerCellId, _teamInfo);
-      //   } catch (e) {
-      //     console.error('failed to parse log line: ' + e.message);
-      //     _teamInfo = null;
-      //   }
-      // }
+      _teamMonsters = _teamDragons + _teamHeralds;  // update total monsters killed
     }
 
     if (line.includes('GAMEFLOW_EVENT.QUIT_TO_LOBBY') ||
