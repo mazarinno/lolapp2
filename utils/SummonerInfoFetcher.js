@@ -19,14 +19,15 @@ define([
   let _ioPlugin;
   let _apiKey;
   let _fetchName = false;
-  let _playerName = "";
-  let _playerTeam = "";
+  let _playerName;
+  let _playerTeam  = "";
   let _teamKills = 0;
   let _teamDeaths = 0;
   let _teamAssists = 0;
   let _teamDragons = 0;
   let _teamHeralds = 0;
   let _teamMonsters = 0;
+  let _teamTurrets = 0;
 
   function start(gameInfo, key) {
     if (gameInfo == null) {
@@ -224,31 +225,24 @@ define([
     // get all players once and scrub through team members only and extract all KDA data
     if (line.includes('lol-gameflow|')) {
       let div = document.getElementById('my-team');
-      let killerTeam = "";
+      let killerTeam;
+      let killer;
 
-      // if we haven't gotten the name yet
-      // this fetch name section will help us find the player's team
-      if (_fetchName = false) {
-        // fetch active player name
-        fetch("​https://127.0.0.1:2999/liveclientdata/activeplayername")
-          .then(response => response.json())
-          .then(data => {
-            _playerName = JSON.stringify(data);
-          })
-
-        // fetch player team
-        fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
-        .then(response => response.json())
-        .then(data => {
-          for (player of data) {
-            if (player.summonerName == _playerName) { 
-              _playerTeam = player.team;
-            }
+      // TODO change these globals into local inside this gameflow if statement
+      // fetch player team
+      fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
+      .then(response => response.json())
+      .then(data => {
+        for (player of data) {
+          if (_fetchName = false) {
+            _playerTeam = player.team.toString();
           }
-        });
+        }
 
         _fetchName = true;
-      }
+      });
+
+      console.log(_fetchName, _playerTeam)
 
       // fetch player list
       fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
@@ -268,24 +262,21 @@ define([
           }
         }
 
-        if ((_teamKills + killCount) > _teamKills) _teamKills += killCount;
-        if ((_teamDeaths + deathCount) > _teamDeaths) _teamDeaths += deathCount;
-        if ((_teamAssists + assistCount) > _teamAssists) _teamAssists += assistCount;
+        // TODO pass these variables out to a csv ...
       });
 
-      div.innerHTML += _teamKills + " " + _teamDeaths + " " + _teamAssists + " ";
-
       // fetch event data
-      fetch("GET ​https://127.0.0.1:2999/liveclientdata/eventdata")
+      fetch("https://127.0.0.1:2999/liveclientdata/eventdata")
       .then(response => response.json())
       .then(data => {
         let dragonCount = 0;
         let heraldCount = 0;
+        let turretCount = 0;
 
-        for (leagueEvent of data) {
+        for (leagueEvent of data.Events) {
           // looking for DragonKill and HeraldKill
-          if (leagueEvent.EventName == "DragonKill" || leagueEvent.EventName == "HeraldKill") {
-            let killer = leagueEvent.KillerName;
+          if (leagueEvent.EventName == "DragonKill" || leagueEvent.EventName == "HeraldKill" || leagueEvent.EventName == "TurretKilled") {
+            killer = leagueEvent.KillerName;
             
             // find killer team
             fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
@@ -306,6 +297,9 @@ define([
                 break;
               case "HeraldKill":
                 if ((_teamHeralds + heraldCount) > _teamHeralds) _teamHeralds += heraldCount;
+                break;
+              case "TurretKilled":
+                if ((_teamTurrets + turretCount) > _teamTurrets) _teamTurrets += turretCount;
                 break;
             }
           }
