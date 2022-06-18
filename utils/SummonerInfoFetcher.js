@@ -254,56 +254,54 @@ define([
             }
           }
 
-          console.log(killCount, deathCount, assistCount);
+          // TODO pass these variables out to a csv ...
         })
       
-    
-
-
-        // TODO pass these variables out to a csv ...
-      });
-
-      // fetch event data
-      fetch("https://127.0.0.1:2999/liveclientdata/eventdata")
-      .then(response => response.json())
-      .then(data => {
-        let dragonCount = 0;
-        let heraldCount = 0;
-        let turretCount = 0;
-
-        for (leagueEvent of data.Events) {
-          // looking for DragonKill and HeraldKill
-          if (leagueEvent.EventName == "DragonKill" || leagueEvent.EventName == "HeraldKill" || leagueEvent.EventName == "TurretKilled") {
-            killer = leagueEvent.KillerName;
-            
-            // find killer team
-            fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
-            .then(response => response.json())
-            .then(data => {
-              for (player of data) {
-                if (player.summonerName == killer) { 
-                  killerTeam = player.team;
+        // fetch event data
+        fetch("https://127.0.0.1:2999/liveclientdata/eventdata")
+        .then(response => response.json())
+        .then(data => {
+          let dragonCount = 0;
+          let heraldCount = 0;
+          let turretCount = 0;
+          let monsterCount =0;
+  
+          for (leagueEvent of data.Events) {
+            // looking for DragonKill and HeraldKill
+            if (leagueEvent.EventName == "DragonKill" || leagueEvent.EventName == "HeraldKill" || leagueEvent.EventName == "TurretKilled") {
+              killer = leagueEvent.KillerName;
+              
+              // find killer team
+              fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
+              .then(response => response.json())
+              .then(data => {
+                for (player of data) {
+                  if (player.summonerName == killer) { 
+                    killerTeam = player.team;
+                  }
                 }
+              });
+            }
+            
+            if (killerTeam == playerTeam) {
+              switch(leagueEvent.EventName) {
+                case "DragonKill":
+                  dragonCount += 1;
+                  break;
+                case "HeraldKill":
+                  heraldCount += 1;
+                  break;
+                case "TurretKilled":
+                  turretCount += 1;
+                  break;
               }
-            });
-          }
-          
-          if (killerTeam == _playerTeam) {
-            switch(leagueEvent.EventName) {
-              case "DragonKill":
-                if ((_teamDragons + dragonCount) > _teamDragons) _teamDragons += dragonCount;
-                break;
-              case "HeraldKill":
-                if ((_teamHeralds + heraldCount) > _teamHeralds) _teamHeralds += heraldCount;
-                break;
-              case "TurretKilled":
-                if ((_teamTurrets + turretCount) > _teamTurrets) _teamTurrets += turretCount;
-                break;
             }
           }
-        }});
+          
+          monsterCount = dragonCount + heraldCount + turretCount;
+        });
 
-      _teamMonsters = _teamDragons + _teamHeralds;  // update total monsters killed
+      });
     }
 
     if (line.includes('GAMEFLOW_EVENT.QUIT_TO_LOBBY') ||
