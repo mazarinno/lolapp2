@@ -254,9 +254,9 @@ define([
           if (player.team == _playerTeam) { 
             // fetch KDA of all those on player team and add them to appropriate global variables ... 
             // data will only be recorded if it is an increase in each case
-            if ((_teamKills += player.scores.kills) > _teamKills) _teamKills += player.scores.kills;
-            if ((_teamDeaths += player.scores.deaths) > _teamDeaths) _teamDeaths += player.scores.deaths;
-            if ((_teamAssists += player.scores.assists) > _teamAssists) _teamAssists += player.scores.assists;
+            if ((_teamKills + player.scores.kills) > _teamKills) _teamKills += player.scores.kills;
+            if ((_teamDeaths + player.scores.deaths) > _teamDeaths) _teamDeaths += player.scores.deaths;
+            if ((_teamAssists + player.scores.assists) > _teamAssists) _teamAssists += player.scores.assists;
           }
         }});
 
