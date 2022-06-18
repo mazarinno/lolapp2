@@ -227,40 +227,38 @@ define([
       let div = document.getElementById('my-team');
       let killerTeam;
       let killer;
+      let playerTeam;
 
       // TODO change these globals into local inside this gameflow if statement
       // fetch player team
       fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
       .then(response => response.json())
-      .then(data => {
-        for (player of data) {
-          if (_fetchName = false) {
-            _playerTeam = player.team.toString();
+      .then(data => { 
+        playerTeam = data[0].team; 
+
+        // fetch player list
+        fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
+        .then(response => response.json())
+        .then(data => {
+          let killCount = 0;
+          let deathCount = 0;
+          let assistCount = 0;
+
+          for (player of data) {
+            if (player.team == playerTeam) { 
+              // fetch KDA of all those on player team and add them to appropriate global variables ... 
+              // data will only be recorded if it is an increase in each case
+              killCount += player.scores.kills;
+              deathCount += player.scores.deaths;
+              assistCount += player.scores.assists;
+            }
           }
-        }
 
-        _fetchName = true;
-      });
+          console.log(killCount, deathCount, assistCount);
+        })
+      
+    
 
-      console.log(_fetchName, _playerTeam)
-
-      // fetch player list
-      fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
-      .then(response => response.json())
-      .then(data => {
-        let killCount = 0;
-        let deathCount = 0;
-        let assistCount = 0;
-
-        for (player of data) {
-          if (player.team == _playerTeam) { 
-            // fetch KDA of all those on player team and add them to appropriate global variables ... 
-            // data will only be recorded if it is an increase in each case
-            killCount += player.kills;
-            deathCount += player.deaths;
-            assistCount += player.assists;
-          }
-        }
 
         // TODO pass these variables out to a csv ...
       });
