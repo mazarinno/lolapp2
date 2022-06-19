@@ -229,7 +229,7 @@ define([
       let killer;
       let playerTeam;
       let playerGold;
-      let teamGoldEstimate;
+      let teamGoldEstimate = 0;
       let killCount = 0;
       let deathCount = 0;
       let assistCount = 0;
@@ -238,7 +238,7 @@ define([
       let dragonCount = 0;
       let heraldCount = 0;
       let turretCount = 0;
-      let monsterCount =0;
+      let monsterCount = 0;
 
       // TODO change these globals into local inside this gameflow if statement
       // fetch player team
@@ -247,14 +247,6 @@ define([
       .then(data => { 
         playerTeam = data[0].team; 
         
-        // get player gold
-        fetch("https://127.0.0.1:2999/liveclientdata/activeplayer")
-          .then(response => response.json())
-          .then(data => { 
-            playerGold = data.currentGold;
-            teamGoldEstimate = playerGold * 5;
-          });
-
         for (player of data) {
           if (player.team == playerTeam) { 
             // fetch KDA of all those on player team and add them to appropriate global variables ... 
@@ -286,49 +278,60 @@ define([
                     killerTeam = player.team;
                   }
                 }
+              
+                if (killerTeam == playerTeam) {
+                  switch(leagueEvent.EventName) {
+                    case "DragonKill":
+                      dragonCount += 1;
+                      break;
+                    case "HeraldKill":
+                      heraldCount += 1;
+                      break;
+                    case "TurretKilled":
+                      turretCount += 1;
+                      break;
+                  }
+                }
+
+                monsterCount = dragonCount + heraldCount;
+
+                // get player gold
+                fetch("https://127.0.0.1:2999/liveclientdata/activeplayer")
+                .then(response => response.json())
+                .then(data => { 
+                  playerGold = data.currentGold;
+                  teamGoldEstimate = playerGold * 5;
+                  console.log("inside fetch " + teamGoldEstimate);
+                
+                  let arrHead = ["Team Gold", "Team Experience", "Team Kills", "Team Deaths", "Team Assists", "Team Dragons", "Team Heralds", "Team Epic Monsters", "Team Turrets"];
+                  let arrData = [teamGoldEstimate, xpTotal, killCount, deathCount, assistCount, dragonCount, heraldCount, monsterCount, turretCount];
+                
+                  console.log(arrData);
+                });
               });
             }
-            
-            if (killerTeam == playerTeam) {
-              switch(leagueEvent.EventName) {
-                case "DragonKill":
-                  dragonCount += 1;
-                  break;
-                case "HeraldKill":
-                  heraldCount += 1;
-                  break;
-                case "TurretKilled":
-                  turretCount += 1;
-                  break;
-              }
-            }
           }
-          
-          monsterCount = dragonCount + heraldCount;
         });
 
-        let arrHead = ["Team Gold", "Team Experience", "Team Kills", "Team Deaths", "Team Assists", "Team Dragons", "Team Heralds", "Team Epic Monsters", "Team Turrets"]
-        let arrData = [teamGoldEstimate, cumulativeXP, killCount, deathCount, assistCount, dragonCount, heraldCount, monsterCount, turretCount]
-
         // TODO pass these variables out to a csv ...
-        const export_csv = (arrayHeader, arrayData, delimiter, fileName) => {
-          let header = arrayHeader.join(delimiter) + '\n';
-          let csv = header;
-          arrayData.forEach( array => {
-              csv += array.join(delimiter)+"\n";
-          });
+      //   const export_csv = (arrayHeader, arrayData, delimiter, fileName) => {
+      //     let header = arrayHeader.join(delimiter) + '\n';
+      //     let csv = header;
+      //     arrayData.forEach( array => {
+      //         csv += array.join(delimiter)+"\n";
+      //     });
 
-          let csvData = new Blob([csv], { type: 'text/csv' });  
-          let csvUrl = URL.createObjectURL(csvData);
+      //     let csvData = new Blob([csv], { type: 'text/csv' });  
+      //     let csvUrl = URL.createObjectURL(csvData);
 
-          let hiddenElement = document.createElement('a');
-          hiddenElement.href = csvUrl;
-          hiddenElement.target = '_blank';
-          hiddenElement.download = fileName + '.csv';
-          hiddenElement.click();
-      }
+      //     let hiddenElement = document.createElement('a');
+      //     hiddenElement.href = csvUrl;
+      //     hiddenElement.target = '_blank';
+      //     hiddenElement.download = fileName + '.csv';
+      //     hiddenElement.click();
+      // }
 
-      export_csv(arrHead, arrData, ",", "data");
+      // export_csv(arrHead, arrData, ",", "data");
 
       });
     }
