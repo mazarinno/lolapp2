@@ -208,20 +208,27 @@ define([
 
     // TODO pass these variables out to a csv ...
   const export_csv = (arrayHeader, arrayData, delimiter, fileName) => {
+    let div = document.getElementById('my-team');
     let header = arrayHeader.join(delimiter) + '\n';
     let csv = header;
-    arrayData.forEach( array => {
-        csv += array.join(delimiter)+"\n";
-    });
+    
+    csv += arrayData.join(delimiter);
 
     let csvData = new Blob([csv], { type: 'text/csv' });  
     let csvUrl = URL.createObjectURL(csvData);
 
-    let hiddenElement = document.createElement('a');
-    hiddenElement.href = csvUrl;
-    hiddenElement.target = '_blank';
-    hiddenElement.download = fileName + '.csv';
-    hiddenElement.click();
+    if (!csv.match(/^data:text\/csv/i)) {
+        csv = 'data:text/csv;charset=utf-8,' + csv;
+    }
+
+    let data = encodeURI(csv);
+  
+    let link = document.createElement('a');
+    link.setAttribute('href', data);
+    link.setAttribute('download', 'exportData.csv');
+    div.appendChild(link);
+    link.click();
+    link.remove();
   }
 
   function _cefClientLogFileListener(id, status, line) {
@@ -327,7 +334,7 @@ define([
             let arrHead = ["Team Gold", "Team Experience", "Team Kills", "Team Deaths", "Team Assists", "Team Dragons", "Team Heralds", "Team Epic Monsters", "Team Turrets"];
             let arrData = [teamGoldEstimate, xpTotal, killCount, deathCount, assistCount, dragonCount, heraldCount, monsterCount, turretCount];
           
-            console.log(arrData);
+            div.innerHTML = arrData + '<br>';
             export_csv(arrHead, arrData, ",", "data");
           });
         });
