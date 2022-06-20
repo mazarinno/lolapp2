@@ -206,6 +206,24 @@ define([
       });
   }
 
+    // TODO pass these variables out to a csv ...
+  const export_csv = (arrayHeader, arrayData, delimiter, fileName) => {
+    let header = arrayHeader.join(delimiter) + '\n';
+    let csv = header;
+    arrayData.forEach( array => {
+        csv += array.join(delimiter)+"\n";
+    });
+
+    let csvData = new Blob([csv], { type: 'text/csv' });  
+    let csvUrl = URL.createObjectURL(csvData);
+
+    let hiddenElement = document.createElement('a');
+    hiddenElement.href = csvUrl;
+    hiddenElement.target = '_blank';
+    hiddenElement.download = fileName + '.csv';
+    hiddenElement.click();
+  }
+
   function _cefClientLogFileListener(id, status, line) {
     if (id !== LOL_CEF_CLIENT_LOG_LISTENER_ID) {
       return;
@@ -310,29 +328,9 @@ define([
             let arrData = [teamGoldEstimate, xpTotal, killCount, deathCount, assistCount, dragonCount, heraldCount, monsterCount, turretCount];
           
             console.log(arrData);
+            export_csv(arrHead, arrData, ",", "data");
           });
         });
-
-        // TODO pass these variables out to a csv ...
-      //   const export_csv = (arrayHeader, arrayData, delimiter, fileName) => {
-      //     let header = arrayHeader.join(delimiter) + '\n';
-      //     let csv = header;
-      //     arrayData.forEach( array => {
-      //         csv += array.join(delimiter)+"\n";
-      //     });
-
-      //     let csvData = new Blob([csv], { type: 'text/csv' });  
-      //     let csvUrl = URL.createObjectURL(csvData);
-
-      //     let hiddenElement = document.createElement('a');
-      //     hiddenElement.href = csvUrl;
-      //     hiddenElement.target = '_blank';
-      //     hiddenElement.download = fileName + '.csv';
-      //     hiddenElement.click();
-      // }
-
-      // export_csv(arrHead, arrData, ",", "data");
-
       });
     }
 
