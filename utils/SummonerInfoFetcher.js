@@ -278,7 +278,7 @@ define([
                     killerTeam = player.team;
                   }
                 }
-              
+
                 if (killerTeam == playerTeam) {
                   switch(leagueEvent.EventName) {
                     case "DragonKill":
@@ -294,23 +294,23 @@ define([
                 }
 
                 monsterCount = dragonCount + heraldCount;
-
-                // get player gold
-                fetch("https://127.0.0.1:2999/liveclientdata/activeplayer")
-                .then(response => response.json())
-                .then(data => { 
-                  playerGold = data.currentGold;
-                  teamGoldEstimate = playerGold * 5;
-                  console.log("inside fetch " + teamGoldEstimate);
-                
-                  let arrHead = ["Team Gold", "Team Experience", "Team Kills", "Team Deaths", "Team Assists", "Team Dragons", "Team Heralds", "Team Epic Monsters", "Team Turrets"];
-                  let arrData = [teamGoldEstimate, xpTotal, killCount, deathCount, assistCount, dragonCount, heraldCount, monsterCount, turretCount];
-                
-                  console.log(arrData);
-                });
               });
             }
           }
+
+          // get player gold
+          fetch("https://127.0.0.1:2999/liveclientdata/activeplayer")
+          .then(response => response.json())
+          .then(data => { 
+            playerGold = data.currentGold;
+            teamGoldEstimate = playerGold * 5;
+            console.log("inside fetch " + teamGoldEstimate);
+          
+            let arrHead = ["Team Gold", "Team Experience", "Team Kills", "Team Deaths", "Team Assists", "Team Dragons", "Team Heralds", "Team Epic Monsters", "Team Turrets"];
+            let arrData = [teamGoldEstimate, xpTotal, killCount, deathCount, assistCount, dragonCount, heraldCount, monsterCount, turretCount];
+          
+            console.log(arrData);
+          });
         });
 
         // TODO pass these variables out to a csv ...
