@@ -1,8 +1,12 @@
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
-import pickle
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.wrappers.scikit_learn import KerasClassifier
+from sklearn.model_selection import cross_val_score
+import tensorflowjs as tfjs
 
 url = 'https://raw.githubusercontent.com/mazarinno/blog/main/high_diamond_ranked_10min.csv'
 df = pd.read_csv(url)
@@ -15,7 +19,7 @@ cols = ['gameId', 'blueFirstBlood', 'redFirstBlood', 'redKills', 'redEliteMonste
        'redTotalJungleMinionsKilled', 'redGoldDiff', 'redExperienceDiff', 'redCSPerMin', 'redGoldPerMin', 'redHeralds',
        'blueGoldDiff', 'blueExperienceDiff', 'blueCSPerMin', 'blueGoldPerMin', 'blueTotalMinionsKilled', 'blueAvgLevel',
         'redAvgLevel', 'redWardsPlaced', 'redWardsDestroyed', 'redDeaths', 'redAssists', 'redTowersDestroyed',
-       'redTotalExperience', 'redTotalGold']
+       'redTotalExperience', 'redTotalGold', "blueTotalJungleMinionsKilled", "blueWardsPlaced", "blueWardsDestroyed"]
 dfClean = dfClean.drop(cols, axis = 1)
 
 # Separating data into the target variable (blue wins) and features (other relevant variables)
@@ -26,17 +30,23 @@ target = dfClean['blueWins']
 for col in features.columns:
     features[col] = scale(features[col])
 
-
 # Shuffle and split the dataset into training and testing set.
 X_train, X_test, y_train, y_test = train_test_split(features, target, 
                                                     test_size = 50,
                                                     random_state = 2,
                                                     stratify = target)
 
-# Initialize the three models 
-clf_A = LogisticRegression(random_state = 42)
+# Initialize the model
+classifier = Sequential()
 
-clf_A.fit(X_train, y_train)
+# Input layer
+classifier.add(Dense(5, kernel_initializer = "uniform",activation = "relu", input_dim=9))
 
-filename = "model.sav"
-pickle.dump(clf_A, open(filename, 'wb'))
+# Output layer
+classifier.add(Dense(1, kernel_initializer = "uniform",activation = "sigmoid"))
+
+classifier.compile(optimizer= "adam",loss = "binary_crossentropy",metrics = ["accuracy"])
+
+classifier.fit(X_train, y_train, batch_size = 10, epochs = 1)
+
+tfjs.converters.save_keras_model(classifier, './tfjsmodel')
