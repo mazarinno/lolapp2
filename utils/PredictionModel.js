@@ -1,4 +1,4 @@
-require(['https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js'], function() {
+define(function() {
     // load the prediction model 
     const model = await loadLayersModel('https://github.com/mazarinno/lolapp2/blob/main/utils/tfjsmodel/model.json');
     

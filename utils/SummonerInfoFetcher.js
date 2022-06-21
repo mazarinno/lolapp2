@@ -1,7 +1,7 @@
 define([
   '/utils/SimpleIOPlugin.js',
   '/utils/PredictionModel.js'
-], function(_simpleIoPlugin, _PredictionModel) {
+], function(_simpleIoPlugin) {
   const SUMMONER_INFO_FETCHER_INTERVAL_MS = 2000;
   const SUMMONER_INFO_FETCHER_MAX_RETRIES = 20;
   const LOL_CEF_CLIENT_LOG_LISTENER_ID = 'LOL_CEF_CLIENT_LOG_LISTENER_ID';
