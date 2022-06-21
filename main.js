@@ -2,7 +2,7 @@
 
 define([
   '/utils/SummonerInfoFetcher.js',
-],function(summonerInfoFetcher, config) {
+],function(summonerInfoFetcher) {
 
   function _getLauncherInfo() {
     overwolf.games.launchers.getRunningLaunchersInfo((info) => {

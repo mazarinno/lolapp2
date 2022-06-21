@@ -1,7 +1,7 @@
 define([
   '/utils/SimpleIOPlugin.js',
-  '/utils/PredictionModel.js'
-], function(_simpleIoPlugin) {
+  'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js'
+], function(_simpleIoPlugin, tf) {
   const SUMMONER_INFO_FETCHER_INTERVAL_MS = 2000;
   const SUMMONER_INFO_FETCHER_MAX_RETRIES = 20;
   const LOL_CEF_CLIENT_LOG_LISTENER_ID = 'LOL_CEF_CLIENT_LOG_LISTENER_ID';
@@ -193,29 +193,19 @@ define([
       });
   }
 
-    // TODO pass these variables out to a csv ...
-  const export_csv = (arrayHeader, arrayData, delimiter, fileName) => {
-    let div = document.getElementById('my-team');
-    let header = arrayHeader.join(delimiter) + '\n';
-    let csv = header;
+  function _getPrediction(data) {
+    const model = tf.loadLayersModel('/utils/tfjsmodel/model.json');
+
+    const inputTensor = tf.tensor2d(data, [data.length, 1]);
+
+    const inputMax = Math.max(data);
+    const inputMin = Math.min(data);
+
+    const normalizedInputs = inputTensor(inputMin).div(inputMax.sub(inputMin));
+
+    let prediction = model.predict(normalizedInputs);
     
-    csv += arrayData.join(delimiter);
-
-    let csvData = new Blob([csv], { type: 'text/csv' });  
-    let csvUrl = URL.createObjectURL(csvData);
-
-    if (!csv.match(/^data:text\/csv/i)) {
-        csv = 'data:text/csv;charset=utf-8,' + csv;
-    }
-
-    let data = encodeURI(csv);
-  
-    let link = document.createElement('a');
-    link.setAttribute('href', data);
-    link.setAttribute('download', 'exportData.csv');
-    div.appendChild(link);
-    link.click();
-    link.remove();
+    return prediction;
   }
 
   function _cefClientLogFileListener(id, status, line) {
@@ -320,8 +310,11 @@ define([
           
             let arrData = [killCount, deathCount, assistCount, monsterCount, dragonCount, heraldCount, turretCount, teamGoldEstimate, xpTotal];
           
+            console.log(arrData);
+
             // TODO send data to predictionmodel
-            _PredictionModel.get(arrData);
+            let prediction = _getPrediction(arrData);
+            console.log(prediction);
           });
         });
       });
