@@ -1,14 +1,13 @@
 "use strict";
 
 define([
-  '/utils/SummonerInfoFetcher.js',
-  '/utils/config.js'
+  '/utils/SummonerInfoFetcher.js'
 ],function(summonerInfoFetcher, config) {
 
   function _getLauncherInfo() {
     overwolf.games.launchers.getRunningLaunchersInfo((info) => {
       if (info.launchers.length) {
-        summonerInfoFetcher.start(info.launchers[0], config.apiKey);
+        summonerInfoFetcher.start(info.launchers[0]);
       } else {
         setTimeout(_getLauncherInfo, 1000);
       }

@@ -1,12 +1,12 @@
 define([
-  '/utils/SimpleIOPlugin.js'
-], function(_simpleIoPlugin) {
+  '/utils/SimpleIOPlugin.js',
+  '/utils/PredictionModel.js'
+], function(_simpleIoPlugin, _PredictionModel) {
   const SUMMONER_INFO_FETCHER_INTERVAL_MS = 2000;
   const SUMMONER_INFO_FETCHER_MAX_RETRIES = 20;
   const LOL_CEF_CLIENT_LOG_LISTENER_ID = 'LOL_CEF_CLIENT_LOG_LISTENER_ID';
   const SUMMONER_NAME_REGEX = /\"localPlayerCellId\":(\d).*,\"myTeam\":(\[.*\])/;
 
-  let _teamInfo = null;
   let _gameInfo = null;
   let _timerId = null;
   let _cefRegionTimer = null;
@@ -17,25 +17,12 @@ define([
   let _fileListenerRetries = 0;
   let _gameRoot;
   let _ioPlugin;
-  let _apiKey;
-  let _fetchName = false;
-  let _playerName;
-  let _playerTeam  = "";
-  let _teamKills = 0;
-  let _teamDeaths = 0;
-  let _teamAssists = 0;
-  let _teamDragons = 0;
-  let _teamHeralds = 0;
-  let _teamMonsters = 0;
-  let _teamTurrets = 0;
 
-  function start(gameInfo, key) {
+  function start(gameInfo) {
     if (gameInfo == null) {
       console.error("SummonerInfoFetcher - passed null gameInfo");
       return false;
     }
-
-    _apiKey = key;
 
     console.log('starting summoner info fetcher.');
 
@@ -331,11 +318,10 @@ define([
             teamGoldEstimate = playerGold * 5;
             console.log("inside fetch " + teamGoldEstimate);
           
-            let arrHead = ["Team Gold", "Team Experience", "Team Kills", "Team Deaths", "Team Assists", "Team Dragons", "Team Heralds", "Team Epic Monsters", "Team Turrets"];
-            let arrData = [teamGoldEstimate, xpTotal, killCount, deathCount, assistCount, dragonCount, heraldCount, monsterCount, turretCount];
+            let arrData = [killCount, deathCount, assistCount, monsterCount, dragonCount, heraldCount, turretCount, teamGoldEstimate, xpTotal];
           
-            div.innerHTML = arrData + '<br>';
-            export_csv(arrHead, arrData, ",", "data");
+            // TODO send data to predictionmodel
+            _PredictionModel.get(arrData);
           });
         });
       });
