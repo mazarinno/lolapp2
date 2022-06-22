@@ -196,15 +196,20 @@ define([
   function _getPrediction(data) {
     tf.loadLayersModel('/utils/tfjsmodel/model.json')
       .then(function(model) {
-          const dataMax = Math.max(data);
-          const dataMin = Math.min(data);
+          const dataMax = Math.max(...data);
+          const dataMin = Math.min(...data);
           let normalizedInputs = [];
 
           for (let piece of data) {
-            normalizedInputs.push((piece-dataMin)/(dataMax-dataMin));
+            console.log(dataMax, dataMin, piece);
+            normalizedInputs.push(parseInt((piece-dataMin)/(dataMax-dataMin)));
           }
 
+          console.log(normalizedInputs);
+
           let arrayPredict = tf.tensor2d(normalizedInputs, [1, 9]);
+
+          arrayPredict.print();
 
           (model.predict([arrayPredict])).print();
       });
