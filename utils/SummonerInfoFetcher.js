@@ -126,9 +126,9 @@ define([
       return;
     }
 
-    let div = document.getElementById('region');
-    div.innerHTML = region;
-    console.info(`My region: ${region}`);
+    // let div = document.getElementById('region');
+    // div.innerHTML = region;
+    // console.info(`My region: ${region}`);
   }
 
   function summonerNameCallback(status, statusReason) {
@@ -199,20 +199,21 @@ define([
           const dataMax = Math.max(...data);
           const dataMin = Math.min(...data);
           let normalizedInputs = [];
+          let div = document.getElementById('region');
 
           for (let piece of data) {
-            console.log(dataMax, dataMin, piece);
             normalizedInputs.push(parseInt((piece-dataMin)/(dataMax-dataMin)));
           }
 
-          console.log(normalizedInputs);
-
           let arrayPredict = tf.tensor2d(normalizedInputs, [1, 9]);
 
-          arrayPredict.print();
+          let prediction = model.predict([arrayPredict]);
 
-          (model.predict([arrayPredict])).print();
+          let percentAdjust = Math.trunc((prediction.dataSync()[0]) * 100);
+
+          div.innerHTML = percentAdjust + "%";
       });
+    return;
   }
 
   function _cefClientLogFileListener(id, status, line) {
@@ -233,7 +234,6 @@ define([
     // IF IN GAMEFLOW .
     // get all players once and scrub through team members only and extract all KDA data
     if (line.includes('lol-gameflow|')) {
-      let div = document.getElementById('my-team');
       let killerTeam;
       let killer;
       let playerTeam;
@@ -312,11 +312,10 @@ define([
           .then(response => response.json())
           .then(data => { 
             playerGold = data.currentGold;
-            teamGoldEstimate = playerGold * 5;
-            console.log("inside fetch " + teamGoldEstimate);
+            teamGoldEstimate += (playerGold * 5);
           
             let arrData = [killCount, deathCount, assistCount, monsterCount, dragonCount, heraldCount, turretCount, teamGoldEstimate, xpTotal];
-          
+    
             console.log(arrData);
 
             // TODO send data to predictionmodel
@@ -331,25 +330,7 @@ define([
       line.includes('lol-end-of-game| Game client is now not running')) {
       // return to lobby (dodge?)
       _teamInfo = null;
-      _printMyTeam(null, []);
     }
-  }
-
-  function _printMyTeam(localPlayerCellId, myTeam) {
-    let div = document.getElementById('my-team');
-    let team = 'TEAM:<br>';
-    let me = 'ME:<br>';
-
-    for (let playerInfo of myTeam) {
-      let summonerId = playerInfo.summonerId;
-      if (playerInfo.cellId === localPlayerCellId) {
-        me += summonerId;
-      } else {
-        team += summonerId + '<br>';
-      }
-    }
-    div.innerHTML = team + '<br>' + me;
-    console.table(myTeam);
   }
 
   function getNewLeagueClientLog() {
