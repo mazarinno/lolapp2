@@ -194,18 +194,20 @@ define([
   }
 
   function _getPrediction(data) {
-    const model = tf.loadLayersModel('/utils/tfjsmodel/model.json');
+    tf.loadLayersModel('/utils/tfjsmodel/model.json')
+      .then(function(model) {
+          const dataMax = Math.max(data);
+          const dataMin = Math.min(data);
+          let normalizedInputs = [];
 
-    const inputTensor = tf.tensor2d(data, [data.length, 1]);
+          for (let piece of data) {
+            normalizedInputs.push((piece-dataMin)/(dataMax-dataMin));
+          }
 
-    const inputMax = Math.max(data);
-    const inputMin = Math.min(data);
+          let arrayPredict = tf.tensor2d(normalizedInputs, [1, 9]);
 
-    const normalizedInputs = inputTensor(inputMin).div(inputMax.sub(inputMin));
-
-    let prediction = model.predict(normalizedInputs);
-    
-    return prediction;
+          (model.predict([arrayPredict])).print();
+      });
   }
 
   function _cefClientLogFileListener(id, status, line) {
@@ -313,8 +315,7 @@ define([
             console.log(arrData);
 
             // TODO send data to predictionmodel
-            let prediction = _getPrediction(arrData);
-            console.log(prediction);
+            _getPrediction(arrData);
           });
         });
       });

@@ -49,4 +49,6 @@ classifier.compile(optimizer= "adam",loss = "binary_crossentropy",metrics = ["ac
 
 classifier.fit(X_train, y_train, batch_size = 10, epochs = 1)
 
-tfjs.converters.save_keras_model(classifier, './tfjsmodel')
+prediction = classifier.predict([0.935301, -0.046926, 1.071495, -0.879231, -0.753226, -0.481132, -0.210439, 0.460179, -0.740639])
+
+prediction
