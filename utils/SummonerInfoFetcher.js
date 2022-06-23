@@ -17,6 +17,7 @@ define([
   let _fileListenerRetries = 0;
   let _gameRoot;
   let _ioPlugin;
+  let _goldEstimate = 0;
 
   function start(gameInfo) {
     if (gameInfo == null) {
@@ -238,7 +239,7 @@ define([
       let killer;
       let playerTeam;
       let playerGold;
-      let teamGoldEstimate = 0;
+
       let killCount = 0;
       let deathCount = 0;
       let assistCount = 0;
@@ -312,9 +313,12 @@ define([
           .then(response => response.json())
           .then(data => { 
             playerGold = data.currentGold;
-            teamGoldEstimate += (playerGold * 5);
+
+            if ((playerGold * 5) != _goldEstimate) {
+              _goldEstimate += (playerGold * 5);
+            }
           
-            let arrData = [killCount, deathCount, assistCount, monsterCount, dragonCount, heraldCount, turretCount, teamGoldEstimate, xpTotal];
+            let arrData = [killCount, deathCount, assistCount, monsterCount, dragonCount, heraldCount, turretCount, _goldEstimate, xpTotal];
     
             console.log(arrData);
 
