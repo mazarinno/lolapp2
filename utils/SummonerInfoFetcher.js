@@ -43,6 +43,8 @@ define([
       _timerId = setTimeout(_extractSummonerInfoCefClient, 0);
     });
 
+    // initialize a model that is trained upon creation of each program start ?? 
+
     return true;
   }
 

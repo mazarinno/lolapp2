@@ -1,4 +1,5 @@
 import pandas as pd
+import csv
 from sklearn.preprocessing import scale
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
@@ -49,6 +50,4 @@ classifier.compile(optimizer= "adam",loss = "binary_crossentropy",metrics = ["ac
 
 classifier.fit(X_train, y_train, batch_size = 10, epochs = 1)
 
-prediction = classifier.predict([0.935301, -0.046926, 1.071495, -0.879231, -0.753226, -0.481132, -0.210439, 0.460179, -0.740639])
-
-prediction
+# export x_train to normalize the live data with the x_train data, using open pandas db 
