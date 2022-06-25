@@ -203,14 +203,14 @@ define([
           let normalizedInputs = [];
 
           // import xtrain csv and read columns
-            Papa.parse('/utils/tfjsmodel/xtrain.csv', {
+          Papa.parse('/utils/tfjsmodel/xtrain.csv', {
             header: false,
             complete: function(results) {
               // sample_data['col1'] = (sample_data['col1'] - training_data['col1'].min()) / (training_data['col1'].max() - training_data['col1'].min())
 
-              data.forEach(function (piece, i) {
-                normalizedInputs.push(parseInt(piece - Math.min(...results.data[(i + 1)]) / (Math.max(...results.data[(i + 1)])) - Math.min(...results.data[(i + 1)])));
-              });
+              // data.forEach(function (piece, i) {
+              //   normalizedInputs.push(parseInt(piece - Math.min(...results.data[(i + 1)]) / (Math.max(...results.data[(i + 1)])) - Math.min(...results.data[(i + 1)])));
+              // });
 
               console.log("Finished:", data);
             }
