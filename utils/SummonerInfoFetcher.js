@@ -1,8 +1,7 @@
 define([
   '/utils/SimpleIOPlugin.js',
-  'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js'
-], function(_simpleIoPlugin, tf, papaparse) {
+  'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js'
+], function(_simpleIoPlugin, tf) {
   const SUMMONER_INFO_FETCHER_INTERVAL_MS = 2000;
   const SUMMONER_INFO_FETCHER_MAX_RETRIES = 20;
   const LOL_CEF_CLIENT_LOG_LISTENER_ID = 'LOL_CEF_CLIENT_LOG_LISTENER_ID';
@@ -204,14 +203,15 @@ define([
           let normalizedInputs = [];
 
           // import xtrain csv and read columns
-          papaparse.parse('/utils/tfjsmodel/xtrain.csv', {
+            Papa.parse('/utils/tfjsmodel/xtrain.csv', {
             header: false,
             complete: function(results) {
               // sample_data['col1'] = (sample_data['col1'] - training_data['col1'].min()) / (training_data['col1'].max() - training_data['col1'].min())
-              // sample_data['col2'] = (sample_data['col2'] - training_data['col2'].min()) / (training_data['col2'].max() - training_data['col2'].min())
-              for (let piece of data) {
-                normalizedInputs.push(((piece - Math.min(...results.data[(indexOf(piece) + 1)]) / (Math.max(...results.data[(indexOf(piece) + 1)]) - Math.min(...results.data[(indexOf(piece) + 1)])))));
-              }
+
+              data.forEach(function (piece, i) {
+                normalizedInputs.push(parseInt(piece - Math.min(...results.data[(i + 1)]) / (Math.max(...results.data[(i + 1)])) - Math.min(...results.data[(i + 1)])));
+              });
+
               console.log("Finished:", data);
             }
           });
