@@ -203,18 +203,23 @@ define([
           let normalizedInputs = [];
 
           // import xtrain csv and read columns
-          Papa.parse('/utils/tfjsmodel/xtrain.csv', {
-            header: false,
-            complete: function(results) {
-              // sample_data['col1'] = (sample_data['col1'] - training_data['col1'].min()) / (training_data['col1'].max() - training_data['col1'].min())
+          fetch('https://raw.githubusercontent.com/mazarinno/lolapp2/main/utils/tfjsmodel/xtrain.csv')
+            .then(response => {
+              Papa.parse(response.url, {
+                header: false,
+                download: true,
+                complete: function(results) {
+                  // sample_data['col1'] = (sample_data['col1'] - training_data['col1'].min()) / (training_data['col1'].max() - training_data['col1'].min())
+    
+                  // data.forEach(function (piece, i) {
+                  //   normalizedInputs.push(parseInt(piece - Math.min(...results.data[(i + 1)]) / (Math.max(...results.data[(i + 1)])) - Math.min(...results.data[(i + 1)])));
+                  // });
+    
+                  console.log("Finished:", results);
+                }
+              });
+            })
 
-              // data.forEach(function (piece, i) {
-              //   normalizedInputs.push(parseInt(piece - Math.min(...results.data[(i + 1)]) / (Math.max(...results.data[(i + 1)])) - Math.min(...results.data[(i + 1)])));
-              // });
-
-              console.log("Finished:", data);
-            }
-          });
 
           let arrayPredict = tf.tensor2d(data, [1, 9]);
           

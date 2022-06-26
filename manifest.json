@@ -33,7 +33,8 @@
           "http://*.overwolf.com",
           "https://*.google-analytics.com",
           "http://*.google-analytics.com",
-          "https://www.googleapis.com"
+          "https://www.googleapis.com",
+          "https://raw.githubusercontent.com/mazarinno/lolapp2/main/utils/tfjsmodel/xtrain.csv"
         ]
       },
       "game_targeting": {
@@ -66,7 +67,7 @@
             "top": 0,
             "left": 0
           },
-          "transparent": true,
+          "transparent": false,
           "clickthrough": true,
           "show_in_taskbar": true,
           "grab_keyboard_focus": false,
