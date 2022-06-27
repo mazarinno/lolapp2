@@ -208,14 +208,15 @@ define([
               Papa.parse(response.url, {
                 header: false,
                 download: true,
+                dynamicTyping: true,
                 complete: function(results) {
                   // sample_data['col1'] = (sample_data['col1'] - training_data['col1'].min()) / (training_data['col1'].max() - training_data['col1'].min())
+
+                  data.forEach(function (piece, i) {
+                    normalizedInputs.push(parseInt(piece - Math.min(...results.data[(i + 1)]) / (Math.max(...results.data[(i + 1)])) - Math.min(...results.data[(i + 1)])));
+                  });
     
-                  // data.forEach(function (piece, i) {
-                  //   normalizedInputs.push(parseInt(piece - Math.min(...results.data[(i + 1)]) / (Math.max(...results.data[(i + 1)])) - Math.min(...results.data[(i + 1)])));
-                  // });
-    
-                  console.log("Finished:", results);
+                  console.log("Finished:");
                 }
               });
             })
