@@ -18,6 +18,26 @@ define([
   let _gameRoot;
   let _ioPlugin;
   let _goldEstimate = 0;
+  var _bkMin, _bkMax, _bdMin, _bdMax, _baMin, _baMax, _bemMin, _bemMax, _bdgMin, _bdgMax, _bhMin, _bhMax, _btdMin, _btdMax, _btgMin, _btgMax, _bteMin, _bteMax;
+  
+  _bkMin = -2.053862852243772;
+  _bkMax = 5.252981766128116;
+  _bdMin = -2.092146489563722;
+  _bdMax = 5.40699481315093;
+  _baMin = -1.6349882136850005;
+  _baMax = 5.500286944765949;
+  _bemMin = -0.8792309888527712;
+  _bemMax = 2.318237422292646;
+  _bdgMin = -0.7532256511066304;
+  _bdgMax = 1.3276234001468374;
+  _bhMin = -0.48113242135723605;
+  _bhMax = 2.078429878367123;
+  _btdMin = -0.21043903299552771;
+  _btdMax = 16.159066533640836;
+  _btgMin = -3.7603050511959566;
+  _btgMax = 4.687827392241373;
+  _bteMin = -6.522575142555767;
+  _bteMax = 3.578527503406988;
 
   function start(gameInfo) {
     if (gameInfo == null) {
@@ -201,28 +221,57 @@ define([
       .then(function(model) {
           let div = document.getElementById('region');
           let normalizedInputs = [];
-
-          // import xtrain csv and read columns
-          fetch('https://raw.githubusercontent.com/mazarinno/lolapp2/main/utils/tfjsmodel/xtrain.csv')
-            .then(response => {
-              Papa.parse(response.url, {
-                header: false,
-                download: true,
-                dynamicTyping: true,
-                complete: function(results) {
-                  // sample_data['col1'] = (sample_data['col1'] - training_data['col1'].min()) / (training_data['col1'].max() - training_data['col1'].min())
-
-                  data.forEach(function (piece, i) {
-                    normalizedInputs.push(parseInt(piece - Math.min(...results.data[(i + 1)]) / (Math.max(...results.data[(i + 1)])) - Math.min(...results.data[(i + 1)])));
-                  });
-    
-                  console.log("Finished:");
-                }
-              });
-            })
+  
+          // sample_data['col1'] = (sample_data['col1'] - training_data['col1'].min()) / (training_data['col1'].max() - training_data['col1'].min())
 
 
-          let arrayPredict = tf.tensor2d(data, [1, 9]);
+          data.forEach(function (piece, i) {
+            let instmin, instmax;
+
+            switch(i) {
+              case 0:
+                instmin = _bkMin;
+                instmax = _bkMax;
+                break;
+              case 1:
+                instmin = _bdMin;
+                instmax = _bdMax;
+                break;
+              case 2:
+                instmin = _baMin;
+                instmax = _baMax;
+                break;
+              case 3:
+                instmin = _bemMin;
+                instmax = _bemMax;
+                break;
+              case 4:
+                instmin = _bdgMin;
+                instmax = _bdgMax;
+                break;
+              case 5:
+                instmin = _bhMin;
+                instmax = _bhMax;
+                break;
+              case 6:
+                instmin = _btdMin;
+                instmax = _btdMax;
+                break;
+              case 7:
+                instmin = _btgMin;
+                instmax = _btgMax;
+                break;
+              case 8:
+                instmin = _bteMin;
+                instmax = _bteMax;
+                break;
+            }
+
+            normalizedInputs.push((piece - instmin) / (instmax - instmin));
+          });
+
+
+          let arrayPredict = tf.tensor2d(normalizedInputs, [1, 9]);
           
           let prediction = model.predict([arrayPredict]);
 
