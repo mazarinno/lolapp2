@@ -51,4 +51,4 @@ classifier.compile(optimizer= "adam",loss = "binary_crossentropy",metrics = ["ac
 classifier.fit(X_train, y_train, batch_size = 10, epochs = 1)
 
 # export x_train to normalize the live data with the x_train data, using open pandas db 
-X_train.to_csv('xtrain.csv')
+dfClean.to_csv('dfClean.csv')

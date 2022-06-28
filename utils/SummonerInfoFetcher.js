@@ -18,26 +18,26 @@ define([
   let _gameRoot;
   let _ioPlugin;
   let _goldEstimate = 0;
-  var _bkMin, _bkMax, _bdMin, _bdMax, _baMin, _baMax, _bemMin, _bemMax, _bdgMin, _bdgMax, _bhMin, _bhMax, _btdMin, _btdMax, _btgMin, _btgMax, _bteMin, _bteMax;
+  var _bkSd, _bkMean, _bdSd, _bdMean, _baSd, _baMean, _bemSd, _bemMean, _bdgSd, _bdgMean, _bhSd, _bhMean, _btdSd, _btdMean, _btgSd, _btgMean, _bteSd, _bteMean;
   
-  _bkMin = -2.053862852243772;
-  _bkMax = 5.252981766128116;
-  _bdMin = -2.092146489563722;
-  _bdMax = 5.40699481315093;
-  _baMin = -1.6349882136850005;
-  _baMax = 5.500286944765949;
-  _bemMin = -0.8792309888527712;
-  _bemMax = 2.318237422292646;
-  _bdgMin = -0.7532256511066304;
-  _bdgMax = 1.3276234001468374;
-  _bhMin = -0.48113242135723605;
-  _bhMax = 2.078429878367123;
-  _btdMin = -0.21043903299552771;
-  _btdMax = 16.159066533640836;
-  _btgMin = -3.7603050511959566;
-  _btgMax = 4.687827392241373;
-  _bteMin = -6.522575142555767;
-  _bteMax = 3.578527503406988;
+  _bkSd = 3.01102797536515;
+  _bdSd = 2.933817709182217;
+  _baSd = 4.064519899696563;
+  _bemSd = 0.6255265026337925;
+  _bdgSd = 0.4805973867496529;
+  _bhSd = 0.39071157453780564;
+  _btdSd = 0.24436916855721583;
+  _btgSd = 1535.4466363146498;
+  _bteSd = 1200.523764356519;
+  _bkMean = 6.18392549853224;
+  _bdMean = 6.137665755643284;
+  _baMean = 6.645105779937241;
+  _bemMean = 0.5499544488308533;
+  _bdgMean = 0.3619799574855755;
+  _bhMean = 0.18797449134527786;
+  _btdMean = 0.05142220872557951;
+  _btgMean = 16503.455511691467;
+  _bteMean = 17928.110132604514;
 
   function start(gameInfo) {
     if (gameInfo == null) {
@@ -226,50 +226,51 @@ define([
 
 
           data.forEach(function (piece, i) {
-            let instmin, instmax;
+            let instsd, instmean;
 
             switch(i) {
               case 0:
-                instmin = _bkMin;
-                instmax = _bkMax;
+                instsd = _bkSd;
+                instmean = _bkMean;
                 break;
               case 1:
-                instmin = _bdMin;
-                instmax = _bdMax;
+                instsd = _bdSd;
+                instmean = _bdMean;
                 break;
               case 2:
-                instmin = _baMin;
-                instmax = _baMax;
+                instsd = _baSd;
+                instmean = _baMean;
                 break;
               case 3:
-                instmin = _bemMin;
-                instmax = _bemMax;
+                instsd = _bemSd;
+                instmean = _bemMean;
                 break;
               case 4:
-                instmin = _bdgMin;
-                instmax = _bdgMax;
+                instsd = _bdgSd;
+                instmean = _bdgMean;
                 break;
               case 5:
-                instmin = _bhMin;
-                instmax = _bhMax;
+                instsd = _bhSd;
+                instmean = _bhMean;
                 break;
               case 6:
-                instmin = _btdMin;
-                instmax = _btdMax;
+                instsd = _btdSd;
+                instmean = _btdMean;
                 break;
               case 7:
-                instmin = _btgMin;
-                instmax = _btgMax;
+                instsd = _btgSd;
+                instmean = _btgMean;
                 break;
               case 8:
-                instmin = _bteMin;
-                instmax = _bteMax;
+                instsd = _bteSd;
+                instmean = _bteMean;
                 break;
             }
 
-            normalizedInputs.push((piece - instmin) / (instmax - instmin));
+            normalizedInputs.push((piece - instsd) / instmean);
           });
 
+          console.log(normalizedInputs);
 
           let arrayPredict = tf.tensor2d(normalizedInputs, [1, 9]);
           
