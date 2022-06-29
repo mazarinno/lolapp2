@@ -2,13 +2,13 @@
     "manifest_version": "1",
     "type": "WebApp",
     "meta": {
-      "name": "LoL Party Demo",
+      "name": "Win Forecast",
       "version": "0.0.0",
       "minimum-overwolf-version": "0.109.0.0",
       "author": "Overwolf",
       "icon": "icon.png",
       "icon_gray": "icon_gray.png",
-      "description": "Get team members info from champion select screen"
+      "description": "Your % chance to win"
     },
     "hide_from_store": true,
     "permissions": [
@@ -33,8 +33,7 @@
           "http://*.overwolf.com",
           "https://*.google-analytics.com",
           "http://*.google-analytics.com",
-          "https://www.googleapis.com",
-          "https://raw.githubusercontent.com/mazarinno/lolapp2/main/utils/tfjsmodel/xtrain.csv"
+          "https://www.googleapis.com"
         ]
       },
       "game_targeting": {
@@ -60,8 +59,8 @@
         "main": {
           "file": "index.html",
           "size": {
-            "width": 500,
-            "height": 500
+            "width": 250,
+            "height": 250
           },
           "start_position": {
             "top": 0,
