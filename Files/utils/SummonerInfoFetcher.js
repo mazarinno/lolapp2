@@ -270,8 +270,6 @@ define([
             normalizedInputs.push((piece - instsd) / instmean);
           });
 
-          console.log(normalizedInputs);
-
           let arrayPredict = tf.tensor2d(normalizedInputs, [1, 9]);
           
           let prediction = model.predict([arrayPredict]);
