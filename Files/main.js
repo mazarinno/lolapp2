@@ -1,7 +1,7 @@
 "use strict";
 
-define([
-  '/utils/SummonerInfoFetcher.js',
+define('main', [
+  'Files/utils/SummonerInfoFetcher.js',
 ],function(summonerInfoFetcher) {
 
   function _getLauncherInfo() {

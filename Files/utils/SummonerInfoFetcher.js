@@ -1,5 +1,5 @@
 define([
-  '/utils/SimpleIOPlugin.js',
+  'Files/utils/SimpleIOPlugin.js',
   'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js'
 ], function(_simpleIoPlugin, tf) {
   const SUMMONER_INFO_FETCHER_INTERVAL_MS = 2000;
@@ -217,7 +217,7 @@ define([
   }
 
   function _getPrediction(data) {
-    tf.loadLayersModel('/utils/tfjsmodel/model.json')
+    tf.loadLayersModel('Files/utils/tfjsmodel/model.json')
       .then(function(model) {
           let div = document.getElementById('region');
           let normalizedInputs = [];

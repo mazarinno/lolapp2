@@ -6,8 +6,8 @@
       "version": "0.0.0",
       "minimum-overwolf-version": "0.109.0.0",
       "author": "Overwolf",
-      "icon": "icon.png",
-      "icon_gray": "icon_gray.png",
+      "icon": "IconMouseNormal.png",
+      "icon_gray": "IconMouseOver.png",
       "description": "Your % chance to win"
     },
     "hide_from_store": true,
@@ -23,7 +23,7 @@
     "data": {
       "extra-objects": {
         "simple-io-plugin": {
-          "file": "simple-io-plugin.dll",
+          "file": "Files/simple-io-plugin.dll",
           "class": "overwolf.plugins.SimpleIOPlugin"
         }
       },
