@@ -6,8 +6,10 @@
       "version": "0.0.0",
       "minimum-overwolf-version": "0.109.0.0",
       "author": "Overwolf",
-      "icon": "IconMouseNormal.png",
-      "icon_gray": "IconMouseOver.png",
+      "icon": "Files/icons/IconMouseOver.png",
+      "icon_gray": "Files/icons/IconMouseNormal.png",
+      "launcher_icon": "Files/icons/launcher_icon.ico",
+      "window_icon": "Files/icons/IconMouseOver.png",
       "description": "Your % chance to win"
     },
     "hide_from_store": true,
@@ -23,7 +25,7 @@
     "data": {
       "extra-objects": {
         "simple-io-plugin": {
-          "file": "/Files/simple-io-plugin.dll",
+          "file": "simple-io-plugin.dll",
           "class": "overwolf.plugins.SimpleIOPlugin"
         }
       },
@@ -54,10 +56,11 @@
         }
       ],
   
-      "start_window": "main",
+      "start_window": "desktop",
       "windows": {
         "main": {
           "file": "index.html",
+          "in_game_only": true,
           "size": {
             "width": 250,
             "height": 250
@@ -72,6 +75,22 @@
           "grab_keyboard_focus": false,
           "grab_focus_on_desktop": false,
           "background_optimization": true
+        },
+        "desktop": {
+          "file": "desktop.html",
+          "desktop_only": true,
+          "native_window": true,
+          "resizable": true,
+          "transparent": false,
+          "override_on_update": true,
+          "size": {
+            "width": 1212,
+            "height": 699
+          },
+          "min_size": {
+            "width": 1212,
+            "height": 699
+          }
         }
       }
     }
