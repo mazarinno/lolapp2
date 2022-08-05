@@ -377,8 +377,6 @@ define([
             }
           
             let arrData = [killCount, deathCount, assistCount, monsterCount, dragonCount, heraldCount, turretCount, _goldEstimate, xpTotal];
-    
-            console.log(arrData);
 
             _getPrediction(arrData);
           });
