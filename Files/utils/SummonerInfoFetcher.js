@@ -148,10 +148,6 @@ define([
 
       return;
     }
-
-    // let div = document.getElementById('region');
-    // div.innerHTML = region;
-    // console.info(`My region: ${region}`);
   }
 
   function summonerNameCallback(status, statusReason) {
@@ -221,9 +217,6 @@ define([
       .then(function(model) {
           let div = document.getElementById('region');
           let normalizedInputs = [];
-  
-          // sample_data['col1'] = (sample_data['col1'] - training_data['col1'].min()) / (training_data['col1'].max() - training_data['col1'].min())
-
 
           data.forEach(function (piece, i) {
             let instsd, instmean;
@@ -316,7 +309,6 @@ define([
       let turretCount = 0;
       let monsterCount = 0;
 
-      // TODO change these globals into local inside this gameflow if statement
       // fetch player team
       fetch("https://127.0.0.1:2999/liveclientdata/playerlist")
       .then(response => response.json())
@@ -388,7 +380,6 @@ define([
     
             console.log(arrData);
 
-            // TODO send data to predictionmodel
             _getPrediction(arrData);
           });
         });
